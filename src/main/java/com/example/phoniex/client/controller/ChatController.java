@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ChatController {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static Map<String, PhoenixChannelClient> CACHE = new ConcurrentHashMap<>();
+    private static Map<String, PhoenixChannelClient> ALL_CONNECTIONS = new ConcurrentHashMap<>();
 
     @PostMapping("/connections/new")
     public Map<String, Integer> create(@RequestBody ConnectionConfig connectionConfig) throws IOException {
@@ -25,20 +25,29 @@ public class ChatController {
             String userName = "user_" + i;
             PhoenixChannelClient phoenixChannelClient = new PhoenixChannelClient(
                     connectionConfig.getServer(), userName, connectionConfig.getChannel());
-            CACHE.put(userName, phoenixChannelClient);
+            ALL_CONNECTIONS.put(userName, phoenixChannelClient);
         }
         counter.addAndGet(connectionConfig.getCount());
-        return Map.of("total_users", CACHE.keySet().size());
+        return Map.of("total_users", ALL_CONNECTIONS.keySet().size());
+    }
+
+    @PostMapping("/connections/message/all")
+    public Map<String, String> send(@RequestBody String empty) {
+        if(ALL_CONNECTIONS.keySet().size() < 1) {
+            return Map.of("status", "failed");
+        }
+        ALL_CONNECTIONS.get(ALL_CONNECTIONS.keySet().iterator().next()).sendMessage("Hello All ...");
+        return Map.of("status", "success");
     }
 
     @GetMapping("/connections/list")
     public Set<String> getAll() {
-        return CACHE.keySet();
+        return ALL_CONNECTIONS.keySet();
     }
 
     @GetMapping("/connections/count")
     public Map<String, Integer> getCount() {
-        return Map.of("total_users", CACHE.keySet().size());
+        return Map.of("total_users", ALL_CONNECTIONS.keySet().size());
     }
 
 }
