@@ -21,7 +21,7 @@ public class ChatController {
 
     @PostMapping("/connections/new")
     public Map<String, Integer> create(@RequestBody ConnectionConfig connectionConfig) throws IOException {
-        for(int i = counter.get(); i <= (counter.get() + connectionConfig.getCount()); i++) {
+        for(int i = counter.get(); i < (counter.get() + connectionConfig.getCount()); i++) {
             String userName = "user_" + i;
             PhoenixChannelClient phoenixChannelClient = new PhoenixChannelClient(
                     connectionConfig.getServer(), userName, connectionConfig.getChannel());
