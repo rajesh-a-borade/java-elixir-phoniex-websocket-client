@@ -77,8 +77,9 @@ public class PhoenixChannelClient {
     @SneakyThrows
     public void sendMessage(String message) {
         Thread.sleep(this.delay);
-        ObjectNode node = new ObjectNode(JsonNodeFactory.instance)
+        ObjectNode msg = new ObjectNode(JsonNodeFactory.instance)
                 .put("name", this.userName)
                 .put("body", message);
+        channel.push("shout", msg);
     }
 }
