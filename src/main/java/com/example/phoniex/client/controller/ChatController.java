@@ -31,7 +31,7 @@ public class ChatController {
         return Map.of("total_users", ALL_CONNECTIONS.keySet().size());
     }
 
-    @PostMapping("/connections/message/all")
+    @PostMapping("/connections/message/hello/all")
     public Map<String, String> send(@RequestBody String empty) {
         if(ALL_CONNECTIONS.keySet().size() < 1) {
             return Map.of("status", "failed");
