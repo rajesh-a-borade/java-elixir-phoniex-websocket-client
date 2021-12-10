@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +23,7 @@ public class ChatController {
     @PostMapping("/connections/new")
     public Map<String, Integer> create(@RequestBody ConnectionConfig connectionConfig) throws IOException {
         for(int i = counter.get(); i < (counter.get() + connectionConfig.getCount()); i++) {
-            String userName = "user_" + i;
+            String userName = "user_" + InetAddress.getLocalHost().getHostAddress() + "_" + i;
             PhoenixChannelClient phoenixChannelClient = new PhoenixChannelClient(
                     connectionConfig.getServer(), userName, connectionConfig.getChannel());
             ALL_CONNECTIONS.put(userName, phoenixChannelClient);
